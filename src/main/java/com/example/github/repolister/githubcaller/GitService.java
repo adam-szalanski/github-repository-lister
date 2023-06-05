@@ -22,16 +22,9 @@ public class GitService {
     public static final String BRANCHES_URL = "https://api.github.com/repos/%s/%s/branches";
     private final CleanResponseMapper cleanResponseMapper;
     private final RestTemplate restTemplate;
-
-    //TODO: tests
     public Flux<UserRepoResponse> getRepositories(String username) {
         String url = String.format(BASE_URL, username);
         UserRepoDTO[] repos = restTemplate.getForObject(url, UserRepoDTO[].class);
-
-        //TODO: exception handling
-//        if (acceptHeader.equals("application/xml"))
-//            return getErrorResponse(HttpStatus.NOT_ACCEPTABLE);
-//
 
         for (UserRepoDTO userRepos : repos) {
             BranchDTO[] branches = restTemplate.getForObject(String.format(BRANCHES_URL, userRepos.getOwner().login(), userRepos.getName()), BranchDTO[].class);
