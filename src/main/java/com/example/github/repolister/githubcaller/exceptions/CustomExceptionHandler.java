@@ -22,7 +22,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(HttpStatus.NOT_ACCEPTABLE.value(), HEADER_NOT_ACCEPTABLE);
-        return ResponseEntity.status(status).headers(headers).contentType(MediaType.APPLICATION_JSON).body(errorDetails.toString());
+        return ResponseEntity.status(status).contentType(MediaType.APPLICATION_JSON).body(errorDetails);
     }
 
 }
