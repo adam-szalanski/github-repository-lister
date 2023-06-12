@@ -1,40 +1,41 @@
 # GitHub Repository Lister
 
-The GitHub Repository Lister project provides a RESTful API for retrieving repositories and associated branches from the GitHub API based on a user's GitHub username. It utilizes the Spring Framework and interacts with the GitHub API to fetch and present repository data.
-
-## Classes
-
-1. **GitController:** The `GitController` class serves as the RESTful controller for retrieving GitHub repositories. It provides an endpoint for fetching repositories based on a given username.
-2. **GitService:** The `GitService` class handles the interaction with the GitHub API. It sends requests to retrieve repositories and associated branches and maps the responses to appropriate DTOs.
-3. **CleanResponseMapper:** The `CleanResponseMapper` class is responsible for mapping the retrieved data to clean response objects, specifically `UserRepoResponse` and `BranchResponse`. It utilizes the MapStruct library for object mapping.
-4. **UserRepoDTO:** The `UserRepoDTO` class represents the data transfer object (DTO) for repository information. It includes the repository name, owner's information (represented by `OwnerDTO`), and an array of `BranchDTO` objects representing the associated branches.
-5. **OwnerDTO:** The `OwnerDTO` class represents the owner of a repository. It contains the owner's login information.
-6. **BranchDTO:** The `BranchDTO` class represents a branch of a repository. It contains the branch name and information about the latest commit (represented by `CommitDTO`).
-7. **CommitDTO:** The `CommitDTO` class represents a commit in a repository. It contains the SHA (unique identifier) of the commit.
+The GitHub Repository Lister project provides a RESTful API for retrieving repositories and associated branches from the GitHub API based on a user's GitHub username. It utilizes the Spring Framework and reactive programming with WebClient to handle HTTP requests and interact with the GitHub API.
 
 ## Functionality
 
 The project allows users to retrieve repository information from GitHub by making a GET request to the `/git/{username}` endpoint. The response includes the repository name, owner's login, and an array of branches associated with each repository. Each branch is represented by a `BranchResponse` object, which includes the branch name and the SHA of the last commit.
 
-The project supports multiple response formats, including JSON and XML. The desired response format can be specified using the `accept` request header.
+In case of errors, such as when a user is not found or an unsupported header is provided, the project generates error responses with the corresponding HTTP status code and error message.
 
-In case of errors, such as invalid usernames or unsupported response formats, the project generates error responses using the `MessageResponse` class. The error response includes the HTTP status code and a corresponding message.
+## Classes
+
+1. **GitController:** The `GitController` class is a RESTful controller that handles requests related to GitHub repositories. It provides an endpoint (`/git/{username}`) for fetching repositories based on a given username.
+
+2. **GitService:** The `GitService` class interacts with the GitHub API to retrieve repository information. It uses the WebClient class from Spring WebFlux to make HTTP requests in a reactive manner. The retrieved data is then processed asynchronously using reactive programming.
+
+3. **CleanResponseMapper:** The `CleanResponseMapper` class is responsible for mapping the retrieved data to clean response objects. It utilizes the MapStruct library for object mapping, specifically mapping `UserRepoDTO` to `UserRepoResponse` and `BranchDTO` to `BranchResponse`.
+
+4. **UserRepoResponse:** The `UserRepoResponse` class represents the response object for repository information. It includes fields such as `repositoryName` (the name of the repository), `ownerLogin` (the login name of the repository owner), and an array of `BranchResponse` objects representing the associated branches.
+
+5. **BranchResponse:** The `BranchResponse` class represents a branch in a repository. It includes fields such as `name` (the name of the branch) and `lastCommitSha` (the SHA of the last commit on the branch).
+
+6. **ErrorDetails:** The `ErrorDetails` class represents error details when an exception occurs in the project. It includes fields such as `status` (HTTP status code) and `Message` (the corresponding error message).
+
+7. **CustomExceptionHandler:** The `CustomExceptionHandler` class handles exceptions thrown during the execution of the API. It provides custom error handling for specific exceptions and generates appropriate error responses.
 
 ## Dependencies
 
 The project has dependencies on the following frameworks, libraries, and tools:
+
 - Spring Framework: Used for creating RESTful APIs and handling HTTP requests.
 - Lombok: Used for generating boilerplate code, such as getters and setters, reducing the amount of manual coding.
-- MapStruct: Used for object mapping between DTOs and response objects.
+- MapStruct: Used for object mapping between DTOs and response objects, simplifying the conversion process.
+- Spring WebFlux: Provides reactive programming support for handling asynchronous and non-blocking operations.
+- WebClient: A non-blocking web client provided by Spring WebFlux for making HTTP requests in a reactive manner.
 
-## Technologies
 
-The project is built using the following technologies:
-- Java: The primary programming language used for implementing the project.
-- Spring Framework: Provides the foundation for building robust and scalable web applications.
-- GitHub API: Interacts with the GitHub API to fetch repository and branch information.
-
-# Author
+## Author
 <table>
 <tr>
 <td><p align="center">Adam Szałański</p></td>
