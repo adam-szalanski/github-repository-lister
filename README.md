@@ -1,6 +1,6 @@
 # GitHub Repository Lister
 
-The GitHub Repository Lister project provides a RESTful API for retrieving repositories and associated branches from the GitHub API based on a user's GitHub username. It utilizes the Spring Framework to handle HTTP requests and interacts with the GitHub API to fetch and present repository data.
+The GitHub Repository Lister project provides a RESTful API for retrieving repositories and associated branches from the GitHub API based on a user's GitHub username. It utilizes the Spring Framework and reactive programming with WebClient to handle HTTP requests and interact with the GitHub API.
 
 ## Functionality
 
@@ -12,7 +12,7 @@ In case of errors, such as when a user is not found or an unsupported header is 
 
 1. **GitController:** The `GitController` class is a RESTful controller that handles requests related to GitHub repositories. It provides an endpoint (`/git/{username}`) for fetching repositories based on a given username.
 
-2. **GitService:** The `GitService` class interacts with the GitHub API to retrieve repository information. It uses the RestTemplate library to send requests and retrieve data. The retrieved data is then mapped to appropriate Data Transfer Objects (DTOs).
+2. **GitService:** The `GitService` class interacts with the GitHub API to retrieve repository information. It uses the WebClient class from Spring WebFlux to make HTTP requests in a reactive manner. The retrieved data is then processed asynchronously using reactive programming.
 
 3. **CleanResponseMapper:** The `CleanResponseMapper` class is responsible for mapping the retrieved data to clean response objects. It utilizes the MapStruct library for object mapping, specifically mapping `UserRepoDTO` to `UserRepoResponse` and `BranchDTO` to `BranchResponse`.
 
@@ -31,6 +31,9 @@ The project has dependencies on the following frameworks, libraries, and tools:
 - Spring Framework: Used for creating RESTful APIs and handling HTTP requests.
 - Lombok: Used for generating boilerplate code, such as getters and setters, reducing the amount of manual coding.
 - MapStruct: Used for object mapping between DTOs and response objects, simplifying the conversion process.
+- Spring WebFlux: Provides reactive programming support for handling asynchronous and non-blocking operations.
+- WebClient: A non-blocking web client provided by Spring WebFlux for making HTTP requests in a reactive manner.
+
 
 ## Author
 <table>
