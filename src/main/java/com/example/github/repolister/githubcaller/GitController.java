@@ -15,8 +15,8 @@ public class GitController {
 
     private final GitService gitService;
 
-    @GetMapping(value = "/{username}",produces = "application/json")
+    @GetMapping(value = "/{username}", produces = "application/json")
     public Flux<UserRepoResponse> getRepositories(@PathVariable("username") String username) {
-        return gitService.getRepositories(username);
+        return gitService.listRepositories(username);
     }
 }
