@@ -4,15 +4,18 @@ import com.example.github.repolister.githubcaller.dto.Branch;
 import com.example.github.repolister.githubcaller.dto.GitRepository;
 import com.example.github.repolister.githubcaller.mapper.BranchesMapper;
 import com.example.github.repolister.githubcaller.mapper.CleanResponseMapper;
+import com.example.github.repolister.githubcaller.response.BranchResponse;
 import com.example.github.repolister.githubcaller.response.UserRepoResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
-
-import java.util.List;
+import reactor.core.publisher.Mono;
 
 @Service
+@Slf4j
 public class GitService {
+
     public static final String BASE_URL = "https://api.github.com";
     public static final String REPOS_URL = "/users/{username}/repos";
     public static final String BRANCHES_URL = "/repos/{login}/{repo_name}/branches";
@@ -27,22 +30,21 @@ public class GitService {
     }
 
     public Flux<UserRepoResponse> listRepositories(String username) {
-        List<GitRepository> repositories = fetchUserRepositories(username).collectList().block();
-        List<UserRepoResponse> responses = repositories.stream().map(
-                gitRepository -> fetchRepositoryBranches(gitRepository)
-                        .map(branchesMapper::toResponse)
-                        .collectList()
-                        .map(branchResponses -> cleanResponseMapper.toCompleteResponse(gitRepository, branchResponses))
-                        .block()
-        ).toList();
-        return Flux.fromIterable(responses);
-    }
-
-    private Flux<Branch> fetchRepositoryBranches(GitRepository gitRepository) {
-        return webClient.get().uri(BRANCHES_URL, gitRepository.owner().login(), gitRepository.name()).retrieve().bodyToFlux(Branch.class);
+        Flux<GitRepository> repositories = fetchUserRepositories(username);
+        return repositories.flatMap(this::mapToResponse);
     }
 
     private Flux<GitRepository> fetchUserRepositories(String username) {
         return webClient.get().uri(REPOS_URL, username).retrieve().bodyToFlux(GitRepository.class);
+    }
+
+    private Mono<UserRepoResponse> mapToResponse(GitRepository gitRepository) {
+        Flux<BranchResponse> foundBranches = fetchRepositoryBranches(gitRepository).map(branchesMapper::toResponse);
+        return foundBranches.collectList()
+                .map(branchResponses -> cleanResponseMapper.toCompleteResponse(gitRepository, branchResponses));
+    }
+
+    private Flux<Branch> fetchRepositoryBranches(GitRepository gitRepository) {
+        return webClient.get().uri(BRANCHES_URL, gitRepository.owner().login(), gitRepository.name()).retrieve().bodyToFlux(Branch.class);
     }
 }
